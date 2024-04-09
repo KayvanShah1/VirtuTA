@@ -1,4 +1,4 @@
-# AI-Virtual-Teaching-Assistant
+# AI Virtual Teaching Assistant
 Welcome to AI Virtual Teaching Assistant! This project is designed to provide assistance in virtual teaching environments using AI technologies.
 > DSCI 560 Spring 24 Final Project
 
