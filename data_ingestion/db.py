@@ -51,18 +51,3 @@ try:
     client = MongoClient(config.MONGODB_URI)
 except Exception as e:
     logger.error("Unable to connect to MongoDB client: %s" % e)
-
-# Create DB cursors
-main_db = client["yf_panels"]
-ticker_db = client["yf_stock_ticker_data"]
-
-# Get collections
-
-users_collection = get_collection(main_db, "users")
-users_collection.create_index([("username", 1)], unique=True)
-
-tickers_info_collection = get_collection(main_db, "tickers_info")
-tickers_info_collection.create_index([("ticker_code", 1)], unique=True)
-
-portfolios_collection = get_collection(main_db, "portfolios")
-portfolios_collection.create_index([("portfolio_name", 1)], unique=True)
