@@ -19,13 +19,9 @@ for post in posts:
     post_id = post["nr"]
     print(post_id)
     mapSave[post_id] = content
-
-    # Sleep for a longer duration to mitigate rate limiting
-    time.sleep(1)  # Sleep for 5 seconds between each iteration
-
-    # Attempt to save data to file
+    time.sleep(1)
     try:
-        with open("posts183.json", "w") as f:
+        with open("DSCI552.json", "w") as f:
             f.write(json.dumps(mapSave))
     except Exception as e:
         print("Error:", e)
