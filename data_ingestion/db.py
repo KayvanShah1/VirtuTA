@@ -51,3 +51,12 @@ try:
     client = MongoClient(config.MONGODB_URI)
 except Exception as e:
     logger.error("Unable to connect to MongoDB client: %s" % e)
+
+DB_NAME = "langchain_db"
+COLLECTION_NAME = "test"
+ATLAS_VECTOR_SEARCH_INDEX_NAME = "vector_index"
+
+main_db = client[DB_NAME]
+
+# Get collections
+MONGODB_COLLECTION = get_collection(main_db, "test")

@@ -1,6 +1,21 @@
-import streamlit as st
+import time
+from typing import List
 from langchain_google_vertexai import VertexAIEmbeddings
 from settings import config
+
+
+def rate_limit(max_per_minute):
+    period = 60 / max_per_minute
+    print("Waiting")
+    while True:
+        before = time.time()
+        yield
+        after = time.time()
+        elapsed = after - before
+        sleep_time = max(0, period - elapsed)
+        if sleep_time > 0:
+            print(".", end="")
+            time.sleep(sleep_time)
 
 
 class EmbeddingClient:
@@ -11,9 +26,15 @@ class EmbeddingClient:
     - model_name: A string representing the name of the model to use for embeddings.
     - project: The Google Cloud project ID where the embedding model is hosted.
     - location: The location of the Google Cloud project, such as 'us-central1'.
+    - requests_per_minute: Maximum number of requests per minute.
+    - num_instances_per_batch: Number of instances (texts) per batch.
     """
 
-    def __init__(self, model_name, project, location):
+    def __init__(
+        self, model_name: str, project: str, location: str, requests_per_minute: int, num_instances_per_batch: int
+    ):
+        self.requests_per_minute = requests_per_minute
+        self.num_instances_per_batch = num_instances_per_batch
         self.client = VertexAIEmbeddings(
             model_name=model_name,
             project=project,
@@ -31,29 +52,20 @@ class EmbeddingClient:
         vectors = self.client.embed_query(query)
         return vectors
 
-    def embed_documents(self, documents):
-        """
-        Retrieve embeddings for multiple documents.
+    def embed_documents(self, texts: List[str]):
+        limiter = rate_limit(self.requests_per_minute)
+        results = []
+        docs = list(texts)
 
-        :param documents: A list of text documents to embed.
-        :return: A list of embeddings for the given documents.
-        """
-        try:
-            return self.client.embed_documents(documents)
-        except AttributeError:
-            print("Method embed_documents not defined for the client.")
-            return None
+        while docs:
+            # Working in batches because the API accepts maximum 5
+            # documents per request to get embeddings
+            head, docs = (
+                docs[: self.num_instances_per_batch],
+                docs[self.num_instances_per_batch :],
+            )
+            chunk = self.client.get_embeddings(head)
+            results.extend(chunk)
+            next(limiter)
 
-
-if __name__ == "__main__":
-    model_name = "textembedding-gecko@003"
-    project = config.PROJECT_ID
-    location = config.PROJECT_LOCATION
-
-    embedding_client = EmbeddingClient(model_name, project, location)
-    vectors = embedding_client.embed_query("Hello World!")
-    if vectors:
-        st.write(vectors)
-        print(vectors)
-        st.write("Successfully used the embedding client!")
-        print("Successfully used the embedding client!")
+        return [r.values for r in results]
