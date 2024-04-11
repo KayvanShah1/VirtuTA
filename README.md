@@ -4,7 +4,8 @@ Welcome to AI Virtual Teaching Assistant! This project is designed to provide as
 
 ## Setup Instructions
 
-### Conda Environment Setup
+### Python Development Environement
+#### Conda Environment Setup
 
 1. **Clone the Repository**: Clone this repository to your local machine.
 
@@ -22,24 +23,26 @@ Welcome to AI Virtual Teaching Assistant! This project is designed to provide as
    conda activate gemini
    ```
 
-### Virtual Environment (venv) Setup
+__OR__
+
+#### Virtual Environment (venv) Setup
 
 1. **Navigate to Project Directory**: Open your terminal or command prompt and navigate to the root directory of the project.
 
 2. **Create Virtual Environment**: Run the following command to create a virtual environment using `requirements.txt`:
 
    ```bash
-   python -m venv venv
+   python -m venv gemini
    ```
 
 3. **Activate the Virtual Environment**:
    - On Windows:
      ```bash
-     venv\Scripts\activate
+     gemini\Scripts\activate
      ```
    - On macOS and Linux:
      ```bash
-     source venv/bin/activate
+     source gemini/bin/activate
      ```
 
 ### Setting Up Environment Variables
@@ -48,7 +51,7 @@ Welcome to AI Virtual Teaching Assistant! This project is designed to provide as
 
 2. **Place GCP Service Account File**: Move your Google Cloud Platform (GCP) service account file into the `secrets` directory. Ensure it is named appropriately.
 
-3. **Copy and Populate Environment Variables**: 
+3. **Copy and Populate Environment Variables**:
    - Copy the `example.env` file provided in the project and rename it to `.env`.
    - Open the `.env` file and set the following variables:
      - `GCLOUD_SERVICE_ACCOUNT_KEY_PATH`: Path to your GCP service account file relative to the `secrets` directory.
