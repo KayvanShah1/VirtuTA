@@ -1,0 +1,22 @@
+{
+    "black-formatter.args": [
+        "--preview",
+        "--line-length=120"
+    ],
+    "flake8.args": [
+        "--max-line-length=120",
+        "--ignore=E402,E302,E305,E266,E203,W503,E722"
+    ],
+    "editor.formatOnSave": true,
+    "python.terminal.activateEnvironment": true,
+    "python.languageServer": "Pylance",
+    "editor.indentSize": "tabSize",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnType": true
+    },
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "git.pruneOnFetch": true,
+    "git.autofetch": "all",
+    "git.enableSmartCommit": true,
+}
