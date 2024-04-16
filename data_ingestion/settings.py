@@ -30,6 +30,19 @@ class Settings(BaseSettings):
     HUGGINGFACEHUB_API_TOKEN: str = Field(default="<your-huggingfacehub-access-token>")
 
 
+class PiazzaBotConfig(BaseSettings):
+    model_config = SettingsConfigDict(env_file=Path.env_file, env_file_encoding="utf-8", extra="ignore")
+
+    PIAZZA_USER_EMAIL: str = Field()
+    PIAZZA_USER_PASSWORD: str = Field()
+
+
+class VectorStoreConfig(BaseSettings):
+    model_config = SettingsConfigDict(env_file=Path.env_file, env_file_encoding="utf-8", extra="ignore")
+
+    MONGODB_URI: str = Field(default="<mongodb-connection-string>")
+
+
 def get_logger(name):
     # Create a logger
     logger = logging.getLogger(name)
@@ -61,4 +74,5 @@ def get_settings() -> Settings:
 
 
 config = get_settings()
+piazza_creds = PiazzaBotConfig()
 # print(config.model_dump())
