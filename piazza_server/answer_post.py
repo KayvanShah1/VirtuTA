@@ -18,9 +18,9 @@ x = p._rpc_api.content_instructor_answer(
     params={
         "anonymous": "no",
         "cid": "luz5g88xy27xx",
-        "content": "This is an new answer for this question?. Revision 55086086087",
-        "revision": 12,
-        "type": "i_answer",
+        "content": "This is an new answer for this question?. Revision 55086086087 new msg ytyutitit",
+        "revision": 1000000,
+        "type": "s_answer",
         "editor": "rte",
     }
 )

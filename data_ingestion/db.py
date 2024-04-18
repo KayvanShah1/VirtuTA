@@ -43,6 +43,20 @@ class PyObjectId(ObjectId):
         )
 
 
+class MongoDBConnector:
+    def __init__(self, uri: str, db_name: str):
+        try:
+            self.client = MongoClient(uri)
+        except Exception as e:
+            logger.error("Unable to connect to MongoDB client: %s" % e)
+
+        self.db_name = db_name
+
+    def get_collection(self, collection_name: str):
+        db = self.client[self.db_name]
+        return db[collection_name]
+
+
 def get_collection(db, collection_name: str):
     return db[collection_name]
 
