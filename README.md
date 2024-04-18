@@ -20,7 +20,13 @@ Welcome to AI Virtual Teaching Assistant! This project is designed to provide as
 4. **Activate the Environment**: Activate the Conda environment using:
 
    ```bash
+   conda config --set auto_activate_base false # To not activate "base" env by default
    conda activate gemini
+   ```
+
+5. **Update the environment**: If you already have a Conda environment cretaed updated it using the command below have the new dependencies installed
+   ```bash
+   conda env update --file env.yml --prune
    ```
 
 __OR__
