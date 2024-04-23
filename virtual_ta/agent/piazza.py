@@ -91,8 +91,34 @@ class PiazzaBot:
                 parsed_data["answers"][atype] = self.parse_answer_data(child)
             elif atype == "followup":
                 parsed_data["answers"]["followup"].append(self.parse_followup_data(child))
-
         return parsed_data
+
+    def create_conversation_thread(self, data: dict):
+        thread = {"uid": data["uid"], "conversation": ""}
+
+        conversation = f"""Title: {data["title"]}\n"""
+        conversation += f"Content: {data['content_text']}\n\n"
+
+        # Add initial answers
+        conversation += "Initial Answers:\n"
+        if data["answers"]["i_answer"]["text"]:
+            conversation += f"Instructor Answer: {data['answers']['i_answer']['text']}\n"
+        if data["answers"]["s_answer"]["text"]:
+            conversation += f"Student Answer: {data['answers']['s_answer']['text']}\n"
+        conversation += "\n"
+
+        # Add follow-ups and feedback
+        conversation += "Follow-ups and Feedback:\n"
+        for followup in data["answers"]["followup"]:
+            conversation += f"Follow-up: {followup['subject']}\n"
+            if followup["feedback"]:
+                conversation += "Feedback:\n"
+                for feedback in followup["feedback"]:
+                    conversation += f"- {feedback}\n"
+
+        thread["conversation"] = conversation
+
+        return thread
 
     def get_unattended_posts(self):
         feeds = self.get_unattended_feeds()
@@ -101,6 +127,8 @@ class PiazzaBot:
             resp = self.get_post_data(post_id=post["nr"])
             resp = self.parse_post_data(resp)
             self.logger.info(pformat(resp))
+            conv = self.create_conversation_thread(resp)
+            self.logger.info(pformat(conv))
 
 
 if __name__ == "__main__":
