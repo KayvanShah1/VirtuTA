@@ -65,4 +65,4 @@ __OR__
      - `PROJECT_LOCATION`: Location of your GCP project.
      - `MONGODB_URI`: URI for your MongoDB instance or database.
 
-Now you're ready to run the AI Virtual Teaching Assistant!
+Now you're ready to run the AI Virtual Teaching Assistant!!
