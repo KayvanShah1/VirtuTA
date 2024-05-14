@@ -2,6 +2,8 @@
 Welcome to AI Virtual Teaching Assistant! This project is designed to provide assistance in virtual teaching environments using AI technologies.
 > DSCI 560 Spring 24 Final Project
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/zmJYuHgZtFs?si=Iemyo5ZOKlyWo5b4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Setup Instructions
 
 ### Python Development Environement
@@ -66,3 +68,17 @@ __OR__
      - `MONGODB_URI`: URI for your MongoDB instance or database.
 
 Now you're ready to run the AI Virtual Teaching Assistant!!
+
+## Authors
+1. [Kayvan Shah](https://github.com/KayvanShah1) | `MS in Applied Data Science` | `USC`
+1. [Soma Meghana Prathipati](https://www.linkedin.com/in/soma-meghana-p-/) | `MS in Applied Data Science` | `USC`
+1. [Shreyansh Baredia](https://github.com/SHREYANSH-BARDIA) | `MS in Applied Data Science` | `USC`
+
+#### LICENSE
+This repository is licensed under the `BSD 5-Clause` License. See the [LICENSE](LICENSE) file for details.
+
+#### Disclaimer
+
+<sub>
+The content and code provided in this repository are for educational and demonstrative purposes only. The project may contain experimental features, and the code might not be optimized for production environments. The authors and contributors are not liable for any misuse, damages, or risks associated with the direct or indirect use of this code. Users are strictly advised to review, test, and completely modify the code to suit their specific use cases and requirements. By using any part of this project, you agree to these terms.
+</sub>
