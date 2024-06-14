@@ -93,7 +93,7 @@ class PiazzaBot:
                 parsed_data["answers"]["followup"].append(self.parse_followup_data(child))
         return parsed_data
 
-    def create_conversation_thread(self, data: dict):
+    def create_conversation_thread(self, data: dict, include_followup: bool = True):
         thread = {"uid": data["uid"], "conversation": ""}
 
         conversation = f"""Title: {data["title"]}\n"""
@@ -107,14 +107,15 @@ class PiazzaBot:
             conversation += f"Student Answer: {data['answers']['s_answer']['text']}\n"
         conversation += "\n"
 
-        # Add follow-ups and feedback
-        conversation += "Follow-ups and Feedback:\n"
-        for followup in data["answers"]["followup"]:
-            conversation += f"Follow-up: {followup['subject']}\n"
-            if followup["feedback"]:
-                conversation += "Feedback:\n"
-                for feedback in followup["feedback"]:
-                    conversation += f"- {feedback}\n"
+        if include_followup:
+            # Add follow-ups and feedback
+            conversation += "Follow-ups and Feedback:\n"
+            for followup in data["answers"]["followup"]:
+                conversation += f"Follow-up: {followup['subject']}\n"
+                if followup["feedback"]:
+                    conversation += "Feedback:\n"
+                    for feedback in followup["feedback"]:
+                        conversation += f"- {feedback}\n"
 
         thread["conversation"] = conversation
 
