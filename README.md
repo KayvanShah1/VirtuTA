@@ -46,6 +46,10 @@ This agentic workflow is directly integrated into `Piazza`, a popular forum used
 
 We invite you to explore VirtuTA and join us on this exciting journey towards revolutionizing the educational experience. Your feedback and contributions are invaluable as we strive to make VirtuTA a state-of-the-art virtual teaching assistant.
 
+> [!INFO]
+> Piazza Classroom Invitation: [Click here](https://piazza.com/usc/summer2024/dsci560)
+> Classroom may or may not be active as project is currently not being maintained
+
 ## Setup Instructions
 
 ### Python Development Environement
