@@ -2,7 +2,7 @@
 Welcome to VirtuTA, an innovative project designed to build a fully functional electronic/virtual teaching assistant for university courses. VirtuTA is designed to enhance the educational experience by providing immediate, accurate, and context-aware responses to student queries. This project leverages the latest advancements in machine learning, natural language processing, and AI to support both students and instructors in an academic setting.
 
 ## Introduction
-In the ever-evolving landscape of education, the demand for effective and efficient teaching tools has never been greater. VirtuTA aims to meet this demand by providing a virtual teaching assistant capable of handling a variety of tasks, from answering student queries to providing detailed feedback and support. This project is a culmination of the skills we've honed through numerous laboratory assignments and the additional expertise we've gained in domain-specific functions.
+In the ever-evolving landscape of education, the demand for effective and efficient teaching tools has never been greater. `VirtuTA` aims to meet this demand by providing a virtual teaching assistant capable of handling a variety of tasks, from answering student queries to providing detailed feedback and support. This project is a culmination of the skills we've honed through numerous laboratory assignments and the additional expertise we've gained in domain-specific functions.
 
 Our platform integrates with various educational tools and data sources to provide a seamless user experience. This project is part of a larger initiative to explore and implement cutting-edge technology in educational environments.
 
@@ -38,7 +38,11 @@ The goal of this semester's final project is to develop a complete working solut
 
 ## Agentic Workflow Integration
 
-In addition to the core features, VirtuTA incorporates an agentic workflow, inspired by Relevance-Augmented Generation (RAG) principles. This workflow enhances VirtuTA's capabilities by integrating powerful data retrieval and generation techniques, ensuring that the assistant provides accurate and contextually relevant responses.
+In addition to the core features, VirtuTA incorporates an agentic workflow, inspired by _Relevance-Augmented Generation_ (RAG) principles. This workflow enhances VirtuTA's capabilities by integrating powerful data retrieval and generation techniques, ensuring that the assistant provides accurate and contextually relevant responses.
+
+We have created a `multimodal RAG` using `Langchain`, powered by `Google Gemini`. For __context awareness__, we utilize two vector stores with `Mongo Atlas Vector Search` for _content-based_ and _logistics-based_ queries. VirtuTA generates detailed and comprehensive answers with snapshots from slides, timestamps, links to videos, and original sources. Additionally, it queries the YouTube API for content-based queries to provide the best videos explaining the concepts students are seeking.
+
+This agentic workflow is directly integrated into `Piazza`, a popular forum used by students and teachers at many universities. It leverages the Piazza API to query unanswered and unresolved questions, providing answers directly within the thread.
 
 We invite you to explore VirtuTA and join us on this exciting journey towards revolutionizing the educational experience. Your feedback and contributions are invaluable as we strive to make VirtuTA a state-of-the-art virtual teaching assistant.
 
