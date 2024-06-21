@@ -19,6 +19,12 @@ class PiazzaBotConfig(BaseSettings):
     PIAZZA_USER_PASSWORD: str = Field()
 
 
+class APIKeys(BaseSettings):
+    model_config = SettingsConfigDict(env_file=Path.env_file, env_file_encoding="utf-8", extra="ignore")
+
+    YOUTUBE_API_KEY: str = Field()
+
+
 def get_logger(name):
     # Create a logger
     logger = logging.getLogger(name)
