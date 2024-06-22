@@ -9,7 +9,10 @@ from rich.logging import RichHandler
 class Path:
     app_dir: str = os.path.dirname(os.path.abspath(__file__))
     root_dir: str = os.path.dirname(app_dir)
-    env_file: str = os.path.join(root_dir, ".env")
+    repo_dir: str = os.path.dirname(root_dir)
+    secrets_dir: str = os.path.join(repo_dir, "secrets")
+    env_file: str = os.path.join(repo_dir, ".env")
+    template_dir: str = os.path.join(root_dir, "templates")
 
 
 class PiazzaBotConfig(BaseSettings):
@@ -23,6 +26,7 @@ class APIKeys(BaseSettings):
     model_config = SettingsConfigDict(env_file=Path.env_file, env_file_encoding="utf-8", extra="ignore")
 
     YOUTUBE_API_KEY: str = Field()
+    GCLOUD_SERVICE_ACCOUNT_KEY_PATH: str = Field(default="<your-gcp-service-acc-key-filename>")
 
 
 def get_logger(name):
