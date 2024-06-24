@@ -7,6 +7,7 @@ from google.oauth2.service_account import Credentials
 from jinja2 import Template
 from rich.pretty import pretty_repr
 from settings import APIKeys, Path, get_logger
+from youtube_transcript_api import YouTubeTranscriptApi
 
 logger = get_logger(__name__)
 
@@ -38,9 +39,19 @@ class RelatedYouTubeVideos:
     ----------
     api_key : str
         The API key used for authenticating requests to the YouTube Data API.
+    credentials : service_account.Credentials
+        The credentials object created from the service account file.
+    token : str
+        The access token used for authorization.
 
     Methods
     -------
+    get_access_token():
+        Refreshes and retrieves the access token.
+
+    make_oauth_request(url: str, params: dict, headers: dict = None)
+        Makes an authenticated HTTP GET request.
+
     make_request(url, params, headers=None):
         Makes an HTTP GET request to the specified URL with the given parameters and optional headers.
 
@@ -53,8 +64,8 @@ class RelatedYouTubeVideos:
     download_and_parse_captions(caption_id):
         Downloads and parses captions in XML format for a given caption ID.
 
-    generate_html(video, captions):
-        Generates embeddable HTML for a video along with its captions.
+    generate_iframe(video):
+        Generates embeddable HTML for a video.
     """
 
     def __init__(
@@ -83,6 +94,9 @@ class RelatedYouTubeVideos:
         self.token = None
 
     def get_access_token(self):
+        """
+        Refreshes and retrieves the access token.
+        """
         if not self.credentials.valid:
             self.credentials.refresh(Request())
         self.token = self.credentials.token
@@ -114,6 +128,24 @@ class RelatedYouTubeVideos:
             return None
 
     def make_oauth_request(self, url, params=None, headers=None):
+        """
+        Makes an HTTP GET request to the specified URL with the given parameters and optional headers.
+
+        Parameters
+        ----------
+        url : str
+            The URL endpoint to which the request is made.
+        params : dict
+            A dictionary of query parameters to include in the request.
+        headers : dict, optional
+            A dictionary of HTTP headers to include in the request (default is None).
+
+        Returns
+        -------
+        dict or None
+            The JSON response as a dictionary if the request is successful (status code 200),
+            or None if the request fails.
+        """
         if not self.token:
             self.get_access_token()
 
@@ -210,7 +242,7 @@ class RelatedYouTubeVideos:
             logger.info(f"No captions found for {video_id}")
             return None
 
-    def download_and_parse_captions(self, caption_id: str):
+    def _download_and_parse_captions(self, caption_id: str):
         """
         Downloads and parses captions in XML format for a given caption ID.
 
@@ -224,13 +256,14 @@ class RelatedYouTubeVideos:
         list of dict or None
             A list of dictionaries containing parsed caption data, or None if the request fails.
         """
+        logger.warn("Method is not supported")
         url = f"{Endpoints.CAPTIONS}/{caption_id}"
         params = {"tfmt": "xml"}  # Requesting XML format
         headers = {"Accept": "application/xml"}
 
         response = self.make_oauth_request(url, params=params, headers=headers)
 
-        if response:
+        if response and response.status_code == 200:
             captions_xml = response.content
             # Parse the XML
             root = ET.fromstring(captions_xml)
@@ -245,9 +278,58 @@ class RelatedYouTubeVideos:
             return captions
         return None
 
-    def generate_iframe(self, video):
+    def download_and_parse_captions(self, video_id: str):
         """
-        Generates embeddable HTML for a video along with its captions.
+        Downloads and parses captions in XML format for a given caption ID.
+
+        Parameters
+        ----------
+        video_id : str
+            The ID of the video to download and parse captions.
+
+        Returns
+        -------
+        list of dict or None
+            A list of dictionaries containing parsed caption data, or None if the request fails.
+        """
+        captions = YouTubeTranscriptApi.get_transcript(video_id, languages=["en"])
+        captions_text = []
+
+        if captions:
+            for cap in captions:
+                cap["end"] = round(cap["start"] + cap["duration"], 2)
+                captions_text.append(f"{cap['start']}-{cap['end']}: {cap['text']}")
+
+            return "\n".join(captions_text)
+        return None
+
+    def hhmmss_to_seconds(self, time_str: str) -> int:
+        """
+        Converts a time string in hh:mm:ss or mm:ss format to seconds.
+
+        Parameters
+        ----------
+        time_str : str
+            The time string in hh:mm:ss or mm:ss format.
+
+        Returns
+        -------
+        int
+            The time in seconds.
+        """
+        parts = list(map(int, time_str.split(":")))
+        if len(parts) == 2:
+            m, s = parts
+            return m * 60 + s
+        elif len(parts) == 3:
+            h, m, s = parts
+            return h * 3600 + m * 60 + s
+        else:
+            raise ValueError("Invalid time format, expected hh:mm:ss or mm:ss")
+
+    def generate_iframe(self, video: dict, start: float = None):
+        """
+        Generates embeddable HTML for a video.
 
         Parameters
         ----------
@@ -262,8 +344,14 @@ class RelatedYouTubeVideos:
         with open(os.path.join(Path.template_dir, "video_embed.html"), "r") as f:
             template_str = f.read()
 
+        url = f"https://www.youtube.com/embed/{video['videoId']}"
+
+        if start:
+            # start = self.hhmmss_to_seconds(start)
+            url = f"{url}?start={int(start)}"
+
         template = Template(template_str)
-        html = template.render(video=video)
+        html = template.render(url=url, video=video)
         return html
 
 
@@ -282,18 +370,19 @@ if __name__ == "__main__":
     sequence? Additionally, could you provide the relevant formulas for these calculations?"""
 
     # Get top related videos
-    top_videos = youtube_api.get_top_videos(query, max_results=3)
+    top_videos = youtube_api.get_top_videos(query, max_results=1)
 
     for idx, video in enumerate(top_videos):
         logger.info(pretty_repr(video))
 
         # Example usage to get captions for each video
+        video_id = video["videoId"]
         captions_info = youtube_api.get_captions(video["videoId"])
-        logger.info(pretty_repr(captions_info))
         if captions_info:
-            first_caption_id = captions_info[0]["captionId"]
-            captions = youtube_api.download_and_parse_captions(first_caption_id)
+            captions = youtube_api.download_and_parse_captions(video_id)
+
+            logger.info(pretty_repr(captions))
 
         # Generate HTML for embedding the video
-        html_output = youtube_api.generate_iframe(video)
+        html_output = youtube_api.generate_iframe(video, start="01:34")
         logger.debug(html_output)
