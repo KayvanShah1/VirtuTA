@@ -7,7 +7,18 @@ from settings import PiazzaBotConfig, get_logger
 
 
 class PiazzaBot:
+    """
+    A bot to interact with Piazza, retrieve unresolved posts, and process them to extract relevant information.
+    """
+
     def __init__(self, network_id: str, creds: PiazzaBotConfig):
+        """
+        Initializes the PiazzaBot with the given network ID and credentials.
+
+        Args:
+            network_id (str): The network ID of the Piazza class.
+            creds (PiazzaBotConfig): The configuration object containing Piazza login credentials.
+        """
         self.network_id = network_id
         self.piazza = Piazza()
         self.logger = get_logger(name="PiazzaBot")
@@ -19,9 +30,21 @@ class PiazzaBot:
         self.piazza_rpc = self.piazza._rpc_api
 
     def login(self, creds: PiazzaBotConfig):
+        """
+        Logs into Piazza using the provided credentials.
+
+        Args:
+            creds (PiazzaBotConfig): The configuration object containing Piazza login credentials.
+        """
         self.piazza.user_login(email=creds.PIAZZA_USER_EMAIL, password=creds.PIAZZA_USER_PASSWORD)
 
     def get_unattended_feeds(self):
+        """
+        Retrieves unresolved posts from the Piazza feed.
+
+        Returns:
+            list: A list of unresolved posts, or an error message if retrieval fails.
+        """
         response = self.piazza_rpc.request(
             method="network.filter_feed",
             data={"nid": self.network_id, "unresolved": 1},
@@ -34,9 +57,27 @@ class PiazzaBot:
         return {"error": response["error"]}
 
     def get_post_data(self, post_id: str):
+        """
+        Retrieves the data for a specific post by its ID.
+
+        Args:
+            post_id (str): The ID of the post to retrieve.
+
+        Returns:
+            dict: The data of the specified post.
+        """
         return self.piazza_rpc.content_get(cid=post_id, nid=self.network_id)
 
     def parse_s3_url(self, url):
+        """
+        Parses an S3 URL to extract the bucket name and prefix.
+
+        Args:
+            url (str): The S3 URL to parse.
+
+        Returns:
+            str: The parsed S3 URL.
+        """
         # Parse the URL
         parsed_url = urlparse(url)
 
@@ -50,6 +91,15 @@ class PiazzaBot:
         return f"{piazza_cdn_host}/{prefix}"
 
     def parse_answer_data(self, answer_data):
+        """
+        Parses the answer data to extract text and image URLs.
+
+        Args:
+            answer_data (dict): The answer data to parse.
+
+        Returns:
+            dict: The parsed answer data containing text and image URLs.
+        """
         parsed_answer = {"text": None, "img": []}
         if "history" in answer_data:
             content = BeautifulSoup(answer_data["history"][0]["content"], "lxml")
@@ -59,6 +109,15 @@ class PiazzaBot:
         return parsed_answer
 
     def parse_followup_data(self, followup_data):
+        """
+        Parses the follow-up data to extract subject and feedback.
+
+        Args:
+            followup_data (dict): The follow-up data to parse.
+
+        Returns:
+            dict: The parsed follow-up data containing subject and feedback.
+        """
         parsed_followup = {"subject": followup_data.get("subject"), "feedback": [], "fid": followup_data.get("uid")}
         if "children" in followup_data:
             for feedback in followup_data["children"]:
@@ -66,6 +125,16 @@ class PiazzaBot:
         return parsed_followup
 
     def parse_post_data(self, data: dict) -> dict:
+        """
+        Parses the post data to extract relevant information.
+
+        Args:
+            data (dict): The post data to parse.
+
+        Returns:
+            dict: The parsed post data containing post ID, UID, title, content text, image URLs, answers, and
+            follow-ups.
+        """
         parsed_data = {
             "post_id": data.get("nr"),
             "uid": data.get("id"),
@@ -94,6 +163,16 @@ class PiazzaBot:
         return parsed_data
 
     def create_conversation_thread(self, data: dict, include_followup: bool = True):
+        """
+        Creates a conversation thread from the parsed post data.
+
+        Args:
+            data (dict): The parsed post data.
+            include_followup (bool): Whether to include follow-up data in the conversation thread.
+
+        Returns:
+            dict: The conversation thread containing UID and conversation text.
+        """
         thread = {"uid": data["uid"], "conversation": ""}
 
         conversation = f"""Title: {data["title"]}\n"""
@@ -122,6 +201,9 @@ class PiazzaBot:
         return thread
 
     def get_unattended_posts(self):
+        """
+        Retrieves unattended posts and logs their parsed data and conversation threads.
+        """
         feeds = self.get_unattended_feeds()
 
         for post in feeds:
