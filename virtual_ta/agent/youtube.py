@@ -5,6 +5,8 @@ import requests
 from google.auth.transport.requests import Request
 from google.oauth2.service_account import Credentials
 from jinja2 import Template
+from langchain_core.prompts import PromptTemplate
+from langchain_google_vertexai import ChatVertexAI
 from rich.pretty import pretty_repr
 from settings import APIKeys, Path, get_logger
 from youtube_transcript_api import YouTubeTranscriptApi
@@ -89,6 +91,7 @@ class RelatedYouTubeVideos:
                 scopes=[
                     "https://www.googleapis.com/auth/youtube.force-ssl",
                     "https://www.googleapis.com/auth/youtubepartner",
+                    "https://www.googleapis.com/auth/cloud-platform",
                 ],
             )
         self.token = None
@@ -298,9 +301,9 @@ class RelatedYouTubeVideos:
         if captions:
             for cap in captions:
                 cap["end"] = round(cap["start"] + cap["duration"], 2)
-                captions_text.append(f"{cap['start']}-{cap['end']}: {cap['text']}")
+                captions_text.append(f"{cap['start']} - {cap['end']}: {cap['text']}")
 
-            return "\n".join(captions_text)
+            return captions_text
         return None
 
     def hhmmss_to_seconds(self, time_str: str) -> int:
@@ -354,6 +357,26 @@ class RelatedYouTubeVideos:
         html = template.render(url=url, video=video)
         return html
 
+    def find_start_time(self, query: str, captions: str) -> int:
+        prompt_template = PromptTemplate(
+            input_variables=["question", "captions"],
+            template="""Given the following YouTube video captions and the question, determine the start timestamp
+            (in seconds) where the answer to the question can be found. Answer should only be in form of a number.
+
+            Question: {question}
+            Captions:
+            {captions}
+
+            Start Timestamp (in seconds):
+            """,
+        )
+        llm_text = ChatVertexAI(
+            model="gemini-pro", credentials=self.credentials, temperature=0.15, max_output_tokens=256
+        )
+        chain = prompt_template | llm_text
+
+        return chain.invoke({"question": query, "captions": captions}).content
+
 
 if __name__ == "__main__":
     api_key = APIKeys()
@@ -383,6 +406,9 @@ if __name__ == "__main__":
 
             logger.info(pretty_repr(captions))
 
+            start_time = youtube_api.find_start_time(query, captions)
+            logger.info(start_time)
+
         # Generate HTML for embedding the video
-        html_output = youtube_api.generate_iframe(video, start="01:34")
+        html_output = youtube_api.generate_iframe(video, start=134)
         logger.debug(html_output)
