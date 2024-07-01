@@ -358,6 +358,17 @@ class RelatedYouTubeVideos:
         return html
 
     def find_start_time(self, query: str, captions: str) -> int:
+        """
+        Finds the start timestamp (in seconds) where the answer to the given question can be found in the YouTube video
+        captions.
+
+        Args:
+            query (str): The question for which the start timestamp needs to be determined.
+            captions (str): The YouTube video captions.
+
+        Returns:
+            int: The start timestamp (in seconds) where the answer to the question can be found.
+        """
         prompt_template = PromptTemplate(
             input_variables=["question", "captions"],
             template="""Given the following YouTube video captions and the question, determine the start timestamp
