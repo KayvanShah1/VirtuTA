@@ -129,7 +129,7 @@ Thank you for your interest in **VirtuTA**!
 This project is a collaborative effort by a team of dedicated students from the __University of Southern California's__ **MS** in **Applied Data Science** program. Special thanks to _Mihika Gaonkar_, _Prathamesh Lonkar_, _Mithesh Ramachandran_, _Hritik Bansal_, and _Suma Sree Gottipati_ for their contributions to demo video.
 
 #### LICENSE
-This repository is licensed under the `BSD 5-Clause` License. See the [LICENSE](LICENSE) file for details.
+This repository is licensed under the `MIT` License. See the [LICENSE](LICENSE) file for details.
 
 #### Disclaimer
 
