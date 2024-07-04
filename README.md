@@ -120,11 +120,12 @@ VirtuTA is poised to revolutionize the way students interact with educational co
 
 Thank you for your interest in **VirtuTA**!
 
-#### Team and Credits
+## Team
 1. [**Kayvan Shah**](https://github.com/KayvanShah1) | `MS in Applied Data Science` | `USC` | *`Author`*
 1. [Shreyansh Baredia](https://github.com/SHREYANSH-BARDIA) | `MS in Applied Data Science` | `USC`
 1. [Soma Meghana Prathipati](https://www.linkedin.com/in/soma-meghana-p-/) | `MS in Applied Data Science` | `USC`
 
+#### Credits
 This project is a collaborative effort by a team of dedicated students from the __University of Southern California's__ **MS** in **Applied Data Science** program. Special thanks to _Mihika Gaonkar_, _Prathamesh Lonkar_, _Mithesh Ramachandran_, _Hritik Bansal_, and _Suma Sree Gottipati_ for their contributions to demo video.
 
 #### LICENSE
